@@ -56,25 +56,23 @@ public class Problem8  {
         int j = 0;  // index for arr2
         int k = 0;  // index for newarr
         
-        do {
+        while (k < newarr.length && i < arr1.length && j < arr2.length) {
             //add an element to the newarr
-            if (arr1[i]<arr1[j]){
+            if (arr1[i]==arr2[j]){
                 newarr[k]=arr1[i];
-            } else {
-                newarr[k]=arr2[j];
+                i++;
+                j++;
+                k++;
             }
             
             //increment i and j
-            while (i < arr1.length && arr1[i]<=newarr[k]) {
+            while (i < arr1.length && arr1[i]<arr2[j]) {
                 i++;
             }
-            while (j < arr2.length && arr2[j]<=newarr[k]) {
+            while (i < arr1.length && j < arr2.length && arr2[j]<arr1[i]) {
                 j++;
             }
-            
-            //increment k
-            k++;
-        } while (k < newarr.length && i < arr1.length && j < arr2.length);
+        }
 
         //return a reference to the new array
         return newarr;
@@ -97,6 +95,12 @@ public class Problem8  {
         int[] a4 = {12, 0, -4, 8};
         int[] result2 = Problem8.findIntersect(a3, a4);
         Sort.printArray(result2); //{-4, 0, 8, 0}
+        
+        //another  test
+        int[] a5 = {2, 3, 4, 5};
+        int[] a6 = {1, 3, 5};
+        int[] result3 = Problem8.findIntersect(a5, a6);
+        Sort.printArray(result3); //{3, 5, 0}
     }
 
 }
