@@ -22,6 +22,16 @@ public class DNode {
         }
     }
     
+    public static DNode initNexts(DNode last) {
+        if (last.prev != null) {
+            DNode current = last.prev;
+            current.next=last;
+            return initNexts(current);
+        }
+        return last;
+    }
+
+    
     public static void main(String[] args) {
         
         //make all of the empty nodes
@@ -41,6 +51,7 @@ public class DNode {
         t.prev = a;
         System.out.println("cat = "  + c);
         
+        
         //insert h to make "chat"
         h.ch = 'h';
         h.next = a;
@@ -48,6 +59,18 @@ public class DNode {
         c.next = h;
         a.prev = h;
         System.out.println("chat = "  + c);
+        
+        //get rid of all of the nexts
+        c.next = null;
+        h.next = null;
+        a.next = null;
+        t.next = null;
+        System.out.println(c.ch + ", " + c.next + ", " + c.prev );
+        System.out.println(h.ch + ", " + h.next + ", " + h.prev );
+        System.out.println(a.ch + ", " + a.next + ", " + a.prev );
+        System.out.println(t.ch + ", " + t.next + ", " + t.prev );
+        
+        System.out.println("chat = "  + initNexts(t));
 
     }
 }
