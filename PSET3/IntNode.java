@@ -40,7 +40,6 @@ public class IntNode {
      * Prints nothing if the list is empty.
      */
     public static void printOddsRecursive(IntNode first) {
-        IntNode currentNode = first;
         if (first != null) {
             if (first.val % 2 != 0) {
                 System.out.println(first.val);
@@ -49,24 +48,23 @@ public class IntNode {
         }
     
     }
+
     
     /**
      * Public method that prints all odd integers in the list.
      * Prints nothing if the list is empty.
      */
     public static void printOddsIterative(IntNode first) {
-        IntNode currentNode = first;
+        if (first != null){
+            IntNode currentNode = first;
         
-        for (int i = 0; i < first.length(); i++) {
-            if (currentNode.val % 2 != 0) {
-                System.out.println(currentNode.val);
-            }
-            currentNode = first.next;
+            do {
+                if (currentNode.val % 2 != 0) {
+                    System.out.println(currentNode.val);
+                }
+                currentNode = currentNode.next;
+            } while (currentNode.next != null);
         }
-    }
-
-    return inters;
-
     }
 
 
@@ -87,5 +85,8 @@ public class IntNode {
         printOddsRecursive(firstNode);
         printOddsRecursive(null);
         printOddsRecursive(prevNode.next);
+        printOddsIterative(firstNode);
+        printOddsIterative(null);
+        printOddsIterative(prevNode.next);
     }
 }

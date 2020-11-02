@@ -205,4 +205,39 @@ public class LLList implements List {
             return item;
         }
     }
+    
+    public boolean removeAll(Object item) {
+        if (item == null) {
+            return false;
+        }
+        
+        boolean returnValue = false;
+        
+        Node prevNode = head;
+        for (int i = 0; i < length; i++) {
+            if (prevNode.next.item.equals(item)) {
+                prevNode.next = prevNode.next.next;
+                length--;
+                returnValue = true;
+            }
+            prevNode = prevNode.next;
+        }
+        
+        return returnValue;
+    }
+    
+    public static void main(String[] args) {
+        String[] letters = {"a", "b", "c", "a", "c", "d", "e", "a"};
+        LLList list2 = new LLList(letters);
+        System.out.println(list2);
+        System.out.println(list2.removeAll("e"));
+        System.out.println(list2);
+        System.out.println(list2.removeAll("a"));
+        System.out.println(list2);
+        System.out.println(list2.removeAll("x"));
+        System.out.println(list2.head.next.next.next.next.item);
+        System.out.println(list2.head.next.next.next.next.next);
+        
+    }
+    
 }

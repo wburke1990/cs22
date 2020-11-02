@@ -134,4 +134,38 @@ public class ArrayList implements List {
         // still needs to be implemented
         return null;
     }
+    
+    public boolean removeAll(Object item) {
+        //edge case
+        if (item == null) {
+            return false;
+        }
+        
+        boolean returnValue = false;
+        
+        int l = length;//don't use the actual length for the loop - it will change as you remove things
+        int shift = 0;
+        for (int i = 0; i < l; i++) {
+            items[i-shift]=items[i]; //shift over the element by the number of elements that have been removed
+            if (items[i].equals(item)) {
+                items[i] = null; //for now - something will get shifted into its place unless you are at the end
+                shift++;
+                length--;
+                returnValue = true;
+            }
+        }
+        return returnValue;
+    }
+    
+    public static void main(String[] args) {
+        String[] letters = {"a", "b", "c", "a", "c", "d", "e", "a"};
+        ArrayList list2 = new ArrayList(letters);
+        System.out.println(list2);
+        System.out.println(list2.removeAll("a"));
+        System.out.println(list2);
+        System.out.println(list2.removeAll("e"));
+        System.out.println(list2);
+        System.out.println(list2.removeAll("x"));
+        
+    }
 }
