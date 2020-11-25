@@ -486,6 +486,35 @@ public class LinkedTree {
     }
     
     
+    /*
+     * Iterative deleteMax() method
+     * from PS 4, Problem 7
+     * Deletes the node with the largest key from the tree and returns the key
+     */
+    public int deleteMax() {
+        if (root == null) {    // root is the root of the entire tree
+            return -1;
+        } else if (root.right == null) {
+            int k = root.key;
+            root = root.left;
+            return k;
+        }
+        
+        //find the largest element
+        Node parent = null;
+        Node trav = root;
+        while (trav.right != null) {
+            parent = trav;
+            trav = trav.right;
+        }
+        
+        int k = trav.key; //save the key to return it later
+        
+        parent.right = trav.left; //update the reference in the parent
+        
+        return k;
+    }
+    
     public static void main(String[] args) {
         System.out.println("--- Testing depth()/depthInTree() from Problem 2 ---");
         System.out.println();
@@ -653,7 +682,103 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
+        System.out.println("(8) Testing on a tree of odds");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {5, 1, 3, 7, 5, 19};
+            tree.insertKeys(keys);
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(0);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 0);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
         
-        
+        System.out.println("--- Testing deleteMax() for Problem 7 ---");
+        System.out.println();
+        System.out.println("(9) Testing on empty tree from Problem 7");
+        try {
+            LinkedTree tree = new LinkedTree();
+            
+            int results = tree.deleteMax();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(-1);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == -1);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(10) Testing 1st deletion on tree from earlier in Problem 7.1");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.deleteMax();
+            System.out.println("actual results:");
+            System.out.println(results);
+            tree.levelOrderPrint();
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println(70);
+            System.out.println("37\n 26 42\n 13 35 56\n 30 47");
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 70);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(11) Testing 2nd deletion on tree from earlier in Problem 7.1");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int temp = tree.deleteMax();
+            int results = tree.deleteMax();
+            System.out.println("actual results:");
+            System.out.println(results);
+            tree.levelOrderPrint();
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println(56);
+            System.out.println("37\n 26 42\n 13 35 47\n 30");
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 56);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(12) Testing deletion on tree with max at root");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {71, 37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            tree.levelOrderPrint();
+            
+            int results = tree.deleteMax();
+            System.out.println("actual results:");
+            System.out.println(results);
+            tree.levelOrderPrint();
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println(71);
+            System.out.println("37\n 26 42\n 13 35 56\n 30 47 70");
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 71);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+
     }
 }
