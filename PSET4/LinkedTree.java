@@ -421,8 +421,8 @@ public class LinkedTree {
     
     
     /*
-     * "wrapper method" for the recursive depthInTree() method
-     * from PS 4, Problem 2
+     * The recursive depthIter() method
+     * from PS 4, Problem 7
      */
     public int depthIter(int key) {
         if (root == null) {    // root is the root of the entire tree
@@ -450,10 +450,46 @@ public class LinkedTree {
     }
     
     
+    /*
+     * "wrapper method" for the recursive sumEvensInTree() method
+     * from PS 4, Problem 7
+     */
+    public int sumEvens() {
+        if (root == null) {    // root is the root of the entire tree
+            return 0;
+        }
+        
+        return sumEvensInTree(root);
+    }
+    
+    /*
+     * The recursive sumEvensInTree() method  
+     * from PS 4, Problem 7.
+     * Returns the sum of the even keys.
+     */
+    private static int sumEvensInTree(Node root) {
+        int s = 0;
+        
+        if ((root.key % 2) == 0) {
+            s = s + root.key;     // base case: found even number
+        } 
+        
+        if (root.left != null) {
+                s = s + sumEvensInTree(root.left); // sum from the left
+        }
+        
+        if (root.right != null) {
+            s = s + sumEvensInTree(root.right); // sum from the right
+        }
+    
+        return s;    // sum of all the evens
+    }
+    
+    
     public static void main(String[] args) {
         System.out.println("--- Testing depth()/depthInTree() from Problem 2 ---");
         System.out.println();
-        System.out.println("(0) Testing on tree from Problem 7, depth of 13");
+        System.out.println("(0) Testing on tree from Problem 7.1, depth of 13");
         try {
             LinkedTree tree = new LinkedTree();
             int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
@@ -482,7 +518,7 @@ public class LinkedTree {
          */
         System.out.println("--- Testing depthIter() for Problem 7 ---");
         System.out.println();
-        System.out.println("(0) Testing on empty tree from Problem 7, depth of 13");
+        System.out.println("(0) Testing on empty tree from Problem 7.1, depth of 13");
         try {
             LinkedTree tree = new LinkedTree();
             
@@ -497,7 +533,7 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
-        System.out.println("(0) Testing on tree from Problem 7, depth of 13");
+        System.out.println("(1) Testing on tree from Problem 7.1, depth of 13");
         try {
             LinkedTree tree = new LinkedTree();
             int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
@@ -514,7 +550,7 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
-        System.out.println("(0) Testing on tree from Problem 7, depth of 37");
+        System.out.println("(2) Testing on tree from Problem 7.1, depth of 37");
         try {
             LinkedTree tree = new LinkedTree();
             int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
@@ -531,7 +567,7 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
-        System.out.println("(0) Testing on tree from Problem 7, depth of 47");
+        System.out.println("(3) Testing on tree from Problem 7.1, depth of 47");
         try {
             LinkedTree tree = new LinkedTree();
             int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
@@ -548,7 +584,7 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
-        System.out.println("(0) Testing on tree from Problem 7, depth of 50");
+        System.out.println("(4) Testing on tree from Problem 7.1, depth of 50");
         try {
             LinkedTree tree = new LinkedTree();
             int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
@@ -566,6 +602,57 @@ public class LinkedTree {
         }
         System.out.println();    // include a blank line between tests
         
+        System.out.println("--- Testing sumEvens()/sumEvensInTree() for Problem 7 ---");
+        System.out.println();
+        System.out.println("(5) Testing on empty tree from Problem 7");
+        try {
+            LinkedTree tree = new LinkedTree();
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(0);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 0);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(6) Testing on tree from earlier in Problem 7.1");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(224);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 224);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(7) Testing on the suggested tree from  Problem 7.2");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {4, 1, 3, 6, 5, 2};
+            tree.insertKeys(keys);
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(12);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 12);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
         
         
     }
