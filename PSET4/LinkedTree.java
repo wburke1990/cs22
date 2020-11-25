@@ -42,6 +42,54 @@ public class LinkedTree {
     }
     
     /*
+     * LinkedTree constructor method
+     * from PS 4, Problem 9
+     * Invokes the recursive addInOrder method to do the work.
+     * This constructor creates a LinkedTree containing the specified keys and data items;
+     * each element of the keys array, keys[i], is paired with the corresponding element of the data-items array, dataItems[i].
+     * The resulting tree is a balanced binary search tree. The method assumes that there are no duplicates – i.e., no repeated keys.
+     * 
+     * For example, if we run the following test code:
+     * 
+     * int[] keys = {10, 8, 4, 2, 15, 12, 7};
+     * String[] dataItems = {"d10", "d8", "d4", "d2", "d15", "d12", "d7"};
+     * LinkedTree tree = new LinkedTree(keys, dataItems);
+     * tree.levelOrderPrint();
+     * System.out.println();
+     * 
+     * we should see:
+     * 
+     * 8
+     * 4 12
+     * 2 7 10 15
+     */
+    public LinkedTree(int[] keys, Object[] dataItems) {
+        if (keys == null || dataItems == null || keys.length != dataItems.length || keys.length == 0) {
+            root = null;
+        } else {
+            SortHelper.quickSort(keys,dataItems);
+            root = null;
+            addInOrder(keys,dataItems,0,keys.length-1);
+        }
+    }
+    
+    /*
+     * Private helper class that creates a balanced binary search tree from a sorted array of keys and an array of data.
+     * 
+     */
+    private void addInOrder(int[] keys, Object[] dataItems,int minIndex, int maxIndex) {
+        if (minIndex == maxIndex) {
+            //base case, add an item
+            insert(keys[minIndex], dataItems[minIndex]);
+        } else if (minIndex < maxIndex) {
+            //recursive case, add an item then add items to both subtrees
+            insert(keys[(minIndex+maxIndex)/2], dataItems[(minIndex+maxIndex)/2]);
+            addInOrder(keys,dataItems,minIndex,(minIndex+maxIndex)/2-1);// left subtree
+            addInOrder(keys,dataItems,(minIndex+maxIndex)/2+1,maxIndex);// right subtree
+        }
+    }
+    
+    /*
      * Prints the keys of the tree in the order given by a preorder traversal.
      * Invokes the recursive preorderPrintTree method to do the work.
      */
@@ -235,6 +283,7 @@ public class LinkedTree {
         } else {
             parent.right = newNode;
         }
+        newNode.parent = parent; //set the parent of the new node
     }
     
     /*
@@ -318,6 +367,14 @@ public class LinkedTree {
             } else {
                 parent.right = toDeleteChild;
             }
+            
+            //keep the parent references up to date
+            if (parent.right != null) {
+                parent.right.parent = parent;
+            }
+            if (parent.left != null) {
+                parent.left.parent = parent;
+            }
         }
     }
     
@@ -378,7 +435,83 @@ public class LinkedTree {
             
             return key;
         }
-    }  
+    }
+    
+    /* Returns a preorder iterator for this tree. */
+    public LinkedTreeIterator inorderIterator() {
+        return new InorderIterator();
+    }
+    
+    /* 
+     * inner class for a preorder iterator 
+     * IMPORTANT: You will not be able to actually use objects from this class
+     * to perform a preorder iteration until you have modified the LinkedTree
+     * methods so that they maintain the parent fields in the Nodes.
+     */
+    private class InorderIterator implements LinkedTreeIterator {
+        private Node nextNode;
+        
+        private InorderIterator() {
+            // The traversal starts with the leftmost node.
+            if (root == null) {
+                nextNode = root;
+            } else {
+                nextNode = root;
+                while (nextNode.left != null) {
+                    nextNode = nextNode.left;
+                }
+            }
+        }
+        
+        public boolean hasNext() {
+            return (nextNode != null);
+        }
+        
+        public int next() {
+            if (nextNode == null) {
+                throw new NoSuchElementException();
+            }
+            
+            // Store a copy of the key to be returned.
+            int key = nextNode.key;
+            
+            // Advance nextNode.
+            if (nextNode.right != null) {
+                // Case 1: Right child exists. Find the smallest element in the right child.
+                nextNode = nextNode.right;
+                while (nextNode.left != null) {
+                    nextNode = nextNode.left;
+                }
+            } else if (nextNode.parent == null) {
+                // Case 2: No parent. Set nextNode to null.
+                nextNode = null;
+            } else {
+                // We need to go back up the tree. There are 2 cases to consider here:
+                if (nextNode.parent.left == nextNode) {
+                    // Case 3: We are coming from the left. The parent is next.
+                    nextNode = nextNode.parent;
+                } else {
+                    // Case 4: We are coming from the right. 
+                    // Go back up the tree until we come up on a node
+                    // from the left, which means that we haven't seen that node yet.
+                    Node parent = nextNode.parent;
+                    Node child = nextNode;
+                    while (parent != null && parent.right == child) {
+                        child = parent;
+                        parent = parent.parent;
+                    }
+                
+                    if (parent == null) {
+                        nextNode = null;  // the traversal is complete
+                    } else {
+                        nextNode = parent;
+                    }
+                }
+            }
+            
+            return key;
+        }
+    }
     
     /*
      * "wrapper method" for the recursive depthInTree() method
@@ -497,6 +630,7 @@ public class LinkedTree {
         } else if (root.right == null) {
             int k = root.key;
             root = root.left;
+            root.parent = null; //maintain the parent reference
             return k;
         }
         
@@ -511,6 +645,9 @@ public class LinkedTree {
         int k = trav.key; //save the key to return it later
         
         parent.right = trav.left; //update the reference in the parent
+        if (parent.right != null) {
+            parent.right.parent = parent; //keep the parent references up to date
+        }
         
         return k;
     }
@@ -547,7 +684,7 @@ public class LinkedTree {
          */
         System.out.println("--- Testing depthIter() for Problem 7 ---");
         System.out.println();
-        System.out.println("(0) Testing on empty tree from Problem 7.1, depth of 13");
+        System.out.println("(0) Testing on empty tree, depth of 13");
         try {
             LinkedTree tree = new LinkedTree();
             
@@ -633,7 +770,7 @@ public class LinkedTree {
         
         System.out.println("--- Testing sumEvens()/sumEvensInTree() for Problem 7 ---");
         System.out.println();
-        System.out.println("(5) Testing on empty tree from Problem 7");
+        System.out.println("(5) Testing on empty tree");
         try {
             LinkedTree tree = new LinkedTree();
             
@@ -702,7 +839,7 @@ public class LinkedTree {
         
         System.out.println("--- Testing deleteMax() for Problem 7 ---");
         System.out.println();
-        System.out.println("(9) Testing on empty tree from Problem 7");
+        System.out.println("(9) Testing on empty tree");
         try {
             LinkedTree tree = new LinkedTree();
             
@@ -779,6 +916,212 @@ public class LinkedTree {
             System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
         }
         System.out.println();    // include a blank line between tests
+        
+        
+        
+        
+        System.out.println("--- Testing deleteMax() for Problem 8 ---");
+        System.out.println();
+        System.out.println("(13) Testing preorderIterator on empty tree");
+        try {
+            LinkedTree tree = new LinkedTree();
+            LinkedTreeIterator iter = tree.preorderIterator();
+            
+            boolean results = iter.hasNext();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(false);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == false);
+            try {
+                iter.next();
+                System.out.println("INCORRECTLY DID NOT THROW AN EXCEPTION for iter.next(); ");
+            } catch (NoSuchElementException e) {
+                System.out.println("CORRECTLY THREW AN EXCEPTION: " + e);
+            }
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(14) Testing preorderIterator with sumEvens() tree from earlier in Problem 7.1");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            LinkedTreeIterator iter = tree.preorderIterator();
+            int s = 0;
+            while (iter.hasNext()) {
+                int key = iter.next();
 
+                if ((key%2) == 0) {
+                    s = s + key;
+                }
+            }
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(s);
+            System.out.println("results from sumEvens:");
+            System.out.println(results);
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println(224);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(s == 224);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(15) Testing preorderIterator by traversing tree from earlier in Problem 7.");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            LinkedTreeIterator iter = tree.preorderIterator();
+            String results = "";
+            while (iter.hasNext()) {
+                int key = iter.next();
+                results = results + key + ",";
+            }
+            
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println("37,26,13,35,30,42,56,47,70,");
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results.equals("37,26,13,35,30,42,56,47,70,"));
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(16) Testing inorderIterator on empty tree");
+        try {
+            LinkedTree tree = new LinkedTree();
+            LinkedTreeIterator iter = tree.inorderIterator();
+            
+            boolean results = iter.hasNext();
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(false);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == false);
+            try {
+                iter.next();
+                System.out.println("INCORRECTLY DID NOT THROW AN EXCEPTION for iter.next(); ");
+            } catch (NoSuchElementException e) {
+                System.out.println("CORRECTLY THREW AN EXCEPTION: " + e);
+            }
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(17) Testing inorderIterator with sumEvens() tree from earlier in Problem 7.1");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            LinkedTreeIterator iter = tree.inorderIterator();
+            int s = 0;
+            while (iter.hasNext()) {
+                int key = iter.next();
+
+                if ((key%2) == 0) {
+                    s = s + key;
+                }
+            }
+            
+            int results = tree.sumEvens();
+            System.out.println("actual results:");
+            System.out.println(s);
+            System.out.println("results from sumEvens:");
+            System.out.println(results);
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println(224);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(s == 224);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(18) Testing inorderIterator by traversing tree from earlier in Problem 7.");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            LinkedTreeIterator iter = tree.inorderIterator();
+            String results = "";
+            while (iter.hasNext()) {
+                int key = iter.next();
+                results = results + key + ",";
+            }
+            
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println();
+            System.out.println("expected results:");
+            System.out.println("13,26,30,35,37,42,47,56,70,");
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results.equals("13,26,30,35,37,42,47,56,70,"));
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        
+        
+        System.out.println("--- Testing LinkedTree(int[] keys, Object[] dataItems) for Problem 9 ---");
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys0 = {10, 8, 4, 2, 15, 12, 7}; 
+        String[] dataItems0 = {"d10", "d8", "d4", "d2", "d15", "d12", "d7"}; 
+        LinkedTree tree0 = new LinkedTree(keys0, dataItems0);
+        tree0.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys1 = {10, 8, 4, 2, 15, 12}; 
+        String[] dataItems1 = {"d10", "d8", "d4", "d2", "d15", "d12"}; 
+        LinkedTree tree1 = new LinkedTree(keys1, dataItems1);
+        tree1.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys2 = {10, 8, 4, 2, 15}; 
+        String[] dataItems2 = {"d10", "d8", "d4", "d2", "d15"}; 
+        LinkedTree tree2 = new LinkedTree(keys2, dataItems2);
+        tree2.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys3 = {10, 8, 4, 2}; 
+        String[] dataItems3 = {"d10", "d8", "d4", "d2"}; 
+        LinkedTree tree3 = new LinkedTree(keys3, dataItems3);
+        tree3.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys4 = {10, 8, 4, 2}; 
+        String[] dataItems4 = {"d10", "d8", "d4"}; 
+        LinkedTree tree4 = new LinkedTree(keys4, dataItems4);
+        tree4.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys5 = {10}; 
+        String[] dataItems5 = {"d10"}; 
+        LinkedTree tree5 = new LinkedTree(keys5, dataItems5);
+        tree5.levelOrderPrint();
+        System.out.println();
+        
+        //test code for the constructor class
+        int[] keys6 = {}; 
+        String[] dataItems6 = {}; 
+        LinkedTree tree6 = new LinkedTree(keys6, dataItems6);
+        tree6.levelOrderPrint();
+        System.out.println();
     }
 }
