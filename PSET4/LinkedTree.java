@@ -4,8 +4,8 @@
  * Computer Science E-22
  *
  * Modifications and additions by:
- *     name:
- *     username:
+ *     name: William Burke
+ *     username: wburke1990
  */
 
 import java.util.*;
@@ -401,14 +401,14 @@ public class LinkedTree {
         if (key == root.key) {
             return 0;     // found
         } else {
-            if (root.left != null) {
+            if (key < root.key && root.left != null) {
                 int depthInLeft = depthInTree(key, root.left);
                 if (depthInLeft != -1) {
                     return depthInLeft + 1;
                 }
             }
         
-            if (root.right != null) {
+            if (key > root.key && root.right != null) { //I realize that this extra check is not strictly necessary, but it makes the code more readable
                 int depthInRight = depthInTree(key, root.right);
                 if (depthInRight != -1) {
                     return depthInRight + 1;
@@ -418,6 +418,37 @@ public class LinkedTree {
             return -1;    // not found in either subtree
         }
     }
+    
+    
+    /*
+     * "wrapper method" for the recursive depthInTree() method
+     * from PS 4, Problem 2
+     */
+    public int depthIter(int key) {
+        if (root == null) {    // root is the root of the entire tree
+            return -1;
+        }
+        
+        int d = 0;
+        
+        Node parent = null;
+        Node trav = root;
+        while (trav != null) {
+            if (trav.key == key) {
+                return d;
+            }
+            parent = trav;
+            if (key < trav.key) {
+                trav = trav.left;
+            } else {
+                trav = trav.right;
+            }
+            d++;
+        }
+        
+        return -1;
+    }
+    
     
     public static void main(String[] args) {
         System.out.println("--- Testing depth()/depthInTree() from Problem 2 ---");
@@ -449,6 +480,93 @@ public class LinkedTree {
          * IMPORTANT: Any tests for your inorder iterator from Problem 8
          * should go BEFORE your tests of the deleteMax method.
          */
+        System.out.println("--- Testing depthIter() for Problem 7 ---");
+        System.out.println();
+        System.out.println("(0) Testing on empty tree from Problem 7, depth of 13");
+        try {
+            LinkedTree tree = new LinkedTree();
+            
+            int results = tree.depthIter(13);
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(-1);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == -1);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(0) Testing on tree from Problem 7, depth of 13");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.depthIter(13);
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(2);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 2);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(0) Testing on tree from Problem 7, depth of 37");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.depthIter(37);
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(0);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 0);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(0) Testing on tree from Problem 7, depth of 47");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.depthIter(47);
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(3);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == 3);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        System.out.println("(0) Testing on tree from Problem 7, depth of 50");
+        try {
+            LinkedTree tree = new LinkedTree();
+            int[] keys = {37, 26, 42, 13, 35, 56, 30, 47, 70};
+            tree.insertKeys(keys);
+            
+            int results = tree.depthIter(50);
+            System.out.println("actual results:");
+            System.out.println(results);
+            System.out.println("expected results:");
+            System.out.println(-1);
+            System.out.print("MATCHES EXPECTED RESULTS?: ");
+            System.out.println(results == -1);
+        } catch (Exception e) {
+            System.out.println("INCORRECTLY THREW AN EXCEPTION: " + e);
+        }
+        System.out.println();    // include a blank line between tests
+        
+        
         
     }
 }
