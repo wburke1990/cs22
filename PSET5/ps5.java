@@ -29,7 +29,7 @@ public class ps5 {
             return true; //leaf node or empty array
         } else if (2*i + 2 > arrlength && arr[i] > arr[2*i + 1]) {
             return isHeapTree(arr, 2*i + 1); //one child
-        } else if (arr[i] > arr[2*i + 1] && arr[i] > arr[2*i + 2]) {
+        } else if (2*i + 1 < arrlength && 2*i + 2 <= arrlength && arr[i] > arr[2*i + 1] && arr[i] > arr[2*i + 2]) {
             return (isHeapTree(arr, 2*i + 1) && isHeapTree(arr, 2*i + 2)); //2 children
         } else {
             return false; //not a heap

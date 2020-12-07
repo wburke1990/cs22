@@ -275,6 +275,51 @@ public class Graph {
     }
     
     /**
+     * depthFirstTravIter - perform a depth-first traversal starting from
+     * the vertex with the specified ID.
+     */
+    public void depthFirstTravIter(String originID) {
+        reinitVertices();
+        
+        /* Get the specified start vertex. */
+        Vertex origin = getVertex(originID);
+        if (origin == null) {
+            throw new IllegalArgumentException("no such vertex: " + originID);
+        }
+        
+        dfTravIter(origin);
+    }
+    
+    private static void dfTravIter(Vertex origin) {
+        /* Mark the origin as encountered, and add it to the stack. */
+        origin.encountered = true;
+        origin.parent = null;
+        Stack<Vertex> s = new LLStack<Vertex>();
+        s.push(origin);
+        
+        while (!s.isEmpty()) {
+            /* Remove a vertex v and visit it. */
+            Vertex v = s.pop();
+            if (v.done == false) {
+                System.out.println(v.id);
+                v.done = true;
+            
+                /* Add v's unencountered neighbors to the queue. */
+                Edge e = v.edges;
+                while (e != null) {
+                    Vertex w = e.end;
+                    if (!w.done) {
+                        w.encountered = true;
+                        w.parent = v;
+                        s.push(w);
+                    }
+                    e = e.next;
+                }
+            }
+        }
+    }
+
+    /**
      * breadthFirstTrav - perform a breadth-first traversal starting from
      * the vertex with the specified ID.
      */
@@ -455,5 +500,8 @@ public class Graph {
         
         System.out.println("depth-first traversal from " + start + ":");
         g.depthFirstTrav(start);
+        
+        System.out.println("depth-first iterative traversal from " + start + ":");
+        g.depthFirstTravIter(start);
     }
 }
